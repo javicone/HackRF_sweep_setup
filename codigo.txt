@@ -1,0 +1,39 @@
+# --- CONFIGURACIÓN ---
+$RutaHackRF = "C:\SDR\hackrf-tools\bin\hackrf_sweep.exe" # CAMBIA ESTO por tu ruta real
+$FreqMin = 863
+$FreqMax = 870
+$BinWidth = 100000   # 100 kHz
+$LnaGain = 32
+$VgaGain = 20
+$DuracionSegundos = 3600
+$OutputFile = "captura_universidad_1h.csv"
+
+Write-Host "--- INICIANDO CAPTURA PARA TFG (WINDOWS) ---" -ForegroundColor Cyan
+Write-Host "Frecuencia: $FreqMin - $FreqMax MHz"
+Write-Host "Guardando en: $OutputFile"
+
+# Iniciamos el proceso de hackrf_sweep
+$ProcessInfo = New-Object System.Diagnostics.ProcessStartInfo
+$ProcessInfo.FileName = $RutaHackRF
+$ProcessInfo.Arguments = "-f $FreqMin`:$FreqMax -w $BinWidth -l $LnaGain -g $VgaGain"
+$ProcessInfo.RedirectStandardOutput = $true
+$ProcessInfo.UseShellExecute = $false
+$Process = [System.Diagnostics.Process]::Start($ProcessInfo)
+
+# Preparamos el archivo de salida
+$StreamWriter = [System.IO.StreamWriter]::$OutputFile
+$StartTime = Get-Date
+
+# Bucle para leer la salida y guardarla durante el tiempo definido
+while ((Get-Date) -lt $StartTime.AddSeconds($DuracionSegundos)) {
+    if (!$Process.StandardOutput.EndOfStream) {
+        $Line = $Process.StandardOutput.ReadLine()
+        $StreamWriter.WriteLine($Line)
+    }
+}
+
+# Limpieza
+$Process.Kill()
+$StreamWriter.Close()
+
+Write-Host "--- CAPTURA FINALIZADA CON ÉXITO ---" -ForegroundColor Green
