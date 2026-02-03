@@ -1,0 +1,23 @@
+# Entornos virtuales
+venv/
+.venv/
+
+# Cache de Python
+__pycache__/
+*.pyc
+
+# Archivos de entrenamiento / datasets
+*.csv
+*.npy
+*.npz
+data/
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# SO
+.DS_Store
+Thumbs.db
