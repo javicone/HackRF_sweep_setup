@@ -1,12 +1,12 @@
 # --- CONFIGURACIÓN ---
-$RutaHackRF = "C:\Users\javiv\Desktop\TFG LORA\MEDIDAS HACKRF\codigo_pruebas\hackrf-tools-windows\hackrf_sweep.exe" 
-$FreqMin = 863
-$FreqMax = 870
+$RutaHackRF = "D:\TFG LORA\MEDIDAS HACKRF\codigo_pruebas\hackrf-tools-windows\hackrf_sweep.exe" 
+$FreqMin = 862
+$FreqMax = 871
 $BinWidth = 100000 
 $LnaGain = 32
 $VgaGain = 20
-$DuracionSegundos = 60
-$OutputFile = "C:\Users\javiv\Desktop\TFG LORA\MEDIDAS HACKRF\codigo_pruebas\captura_universidad.csv"
+$DuracionSegundos = 3600
+$OutputFile = "D:\TFG LORA\MEDIDAS HACKRF\codigo_pruebas\captura_aulario.csv"
 
 Write-Host "--- VERIFICANDO HARDWARE ---" -ForegroundColor Yellow
 if (-not (Test-Path $RutaHackRF)) {

@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load the file
-file_path = 'captura_universidad.csv'
-
+file_path = 'captura_aulario_1hora.csv'
+print(f"Cargando datos desde: {file_path}")
 # Read with error handling for encoding
 try:
     df = pd.read_csv(file_path, header=None, encoding='utf-8')
@@ -12,7 +12,7 @@ except:
     df = pd.read_csv(file_path, header=None, encoding='utf-16')
 
 df = df.dropna()
-
+print(f"Datos cargados: {df.shape[0]} filas, {df.shape[1]} columnas")
 # --- Reconstruct Waterfall Matrix ---
 # Identify sweep blocks based on start frequency (Column 2)
 freq_starts = df[2].unique()
@@ -23,6 +23,7 @@ row0 = df[df[2] == freq_starts[0]].iloc[0]
 bin_width_hz = row0[4]
 
 bloques = []
+print("Creando bloques de datos por frecuencia de inicio:")
 for f_start in freq_starts:
     sub_df = df[df[2] == f_start].copy()
     
@@ -40,14 +41,14 @@ for f_start in freq_starts:
     potencias['sweep_id'] = range(len(potencias))
     
     bloques.append(potencias)
-
+print(f"Total bloques creados: {len(bloques)}")
 # Merge blocks horizontally aligned by sweep_id
 dfs_to_merge = [b.set_index('sweep_id') for b in bloques]
 matriz_espectro = pd.concat(dfs_to_merge, axis=1).sort_index(axis=1)
 
 # Filter range of interest (863 - 870 MHz)
-FRECUENCIA_MIN_INTERES = 863.0
-FRECUENCIA_MAX_INTERES = 870.0
+FRECUENCIA_MIN_INTERES = 862.0
+FRECUENCIA_MAX_INTERES = 871.0
 cols_mhz = matriz_espectro.columns / 1e6
 mask_freq = (cols_mhz >= FRECUENCIA_MIN_INTERES) & (cols_mhz <= FRECUENCIA_MAX_INTERES)
 matriz_espectro_filt = matriz_espectro.loc[:, mask_freq]
@@ -63,7 +64,7 @@ todos_los_valores = todos_los_valores[~np.isnan(todos_los_valores)]
 hist_y, hist_x = np.histogram(todos_los_valores, bins=100)
 pico_ruido = hist_x[np.argmax(hist_y)]
 umbral_calculado = pico_ruido + 6.0
-
+umbral_calculado = -55
 print(f"Piso de ruido estimado: {pico_ruido:.2f} dB")
 print(f"Umbral calculado (+6dB): {umbral_calculado:.2f} dB")
 
@@ -93,15 +94,16 @@ fig = plt.figure(figsize=(15, 10))
 gs = fig.add_gridspec(2, 2, width_ratios=[3, 1], height_ratios=[1, 1])
 
 # 1. Waterfall
-ax1 = fig.add_subplot(gs[0, 0])
+ax1 = fig.add_subplot(gs[0, :])
 im = ax1.imshow(matriz_espectro_filt, aspect='auto', 
                 extent=[freqs_mhz.min(), freqs_mhz.max(), len(tiempo_sweeps), 0],
                 cmap='inferno', vmin=pico_ruido-5, vmax=umbral_calculado+20)
 ax1.set_title("Espectrograma (Waterfall)")
-ax1.set_ylabel("Tiempo (Barridos)")
+ax1.set_ylabel("Tiempo (Barridos)(1 hora total)")
 ax1.set_xlabel("Frecuencia (MHz)")
 plt.colorbar(im, ax=ax1, label='dBfs')
 
+'''
 # 2. Histogram
 ax2 = fig.add_subplot(gs[0, 1])
 ax2.hist(todos_los_valores, bins=100, color='gray', orientation='horizontal', density=True)
@@ -109,17 +111,18 @@ ax2.axhline(pico_ruido, color='blue', linestyle='--', label='Ruido')
 ax2.axhline(umbral_calculado, color='red', linestyle='-', label='Umbral')
 ax2.set_title("Distribución de Energía")
 ax2.legend()
-
+'''
 # 3. Spectrum Summary
 ax3 = fig.add_subplot(gs[1, :])
 avg_spectrum = matriz_espectro_filt.mean(axis=0)
 max_spectrum = matriz_espectro_filt.max(axis=0)
-ax3.plot(freqs_mhz, max_spectrum, color='red', alpha=0.5, label='Max Hold')
+ax3.plot(freqs_mhz, max_spectrum, color='red', alpha=0.5, label='Máximo observado')
 ax3.plot(freqs_mhz, avg_spectrum, color='navy', label='Promedio')
-ax3.axhline(umbral_calculado, color='orange', linestyle='--', label='Umbral Dinámico')
+ax3.axhline(umbral_calculado, color='orange', linestyle='--', label='Umbral Ruido')
 ax3.set_title("Espectro Agregado")
 ax3.set_xlabel("Frecuencia (MHz)")
 ax3.legend()
 
 plt.tight_layout()
+plt.savefig("analisis_lora_v2.png", dpi=600)
 plt.show()

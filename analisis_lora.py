@@ -6,7 +6,7 @@ import os
 # ==========================================
 # CONFIGURACIÓN
 # ==========================================
-ARCHIVO_CSV = "captura_universidad.csv"
+ARCHIVO_CSV = "captura_aulario_1hora.csv"
 UMBRAL_OCUPACION_DB = -60.0  # Ajusta según tu ruido (aprox 10dB por encima del suelo azul)
 ANCHO_CANAL_LORA = 0.125     # MHz
 
