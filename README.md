@@ -2,7 +2,8 @@
 
 ![Ejemplo datos recogidos](images/00_dashboard_resumen.png)
 
-Este proyecto recoge scripts para capturar el espectro con `hackrf_sweep` (herramienta oficial de HackRF) y analizar los datos en Python. Incluye:
+Este proyecto recoge scripts para capturar el espectro con `hackrf_sweep` (herramienta oficial de HackRF) y analizar los datos en Python. Está siendo empleado para el desarrollo de mi TFG y las medidas han sido tomadas en el Centro Universitario de Mérida.
+ Incluye:
 
 - Captura en Windows con PowerShell usando `hackrf_sweep`.
 - Análisis de CSVs (salida de `hackrf_sweep`) y generación de gráficas.
