@@ -106,18 +106,20 @@ python analisis_lora.py
 
 Entrada: `captura_universidad.csv`.
 
-### Análisis agregado y duty cycle
+### Análisis de ocupación de canales LoRa
 
 Archivo: [analisis_lora_v2.py](analisis_lora_v2.py)
 
 Qué hace:
-- Agrupa por frecuencia inicial (columna 2) y reconstruye el espectro completo ordenado por frecuencia.
-- Calcula por bin: potencia promedio, pico máximo y ocupación (% de barridos por encima del umbral `UMBRAL_OCUPACION_DB`, por defecto −60 dBm).
-- Informa la “viabilidad” de canales LoRa (868.1, 868.3, 868.5, 869.525, 869.8) con estado: libre, tráfico o saturado según ocupación.
-- Grafica:
-	- Espectro reconstruido con promedio (azul) y picos (rojo), umbral naranja y zoom 863–871 MHz.
-	- Duty cycle (%) por frecuencia y marcas verticales en canales LoRa.
-- Guarda la figura como `analisis_final_tfg.png`.
+- Reconstruye la matriz tiempo-frecuencia completa agrupando bloques por frecuencia inicial (columna 2).
+- Usa un umbral fijo de detección (`UMBRAL_DB = -55 dBfs`) para identificar señales activas (se debe modificar manualmente o se puede dejar que el programa lo calcule él mismo, a gusto del usuario).
+- Calcula ocupación temporal (duty cycle) de canales LoRa (868.1, 868.3, 868.5, 869.525 MHz):
+	- Considera el canal "ocupado" si la potencia media en su ancho de banda (125 kHz) supera el umbral(dependerá de cual sea el umbral de ruido).
+	- Reporta el porcentaje de tiempo ocupado para cada canal.
+- Genera 2 gráficas de alta calidad (300 DPI):
+	1. **analisis_lora_vertical.png**: Espectrograma (waterfall) y estadísticas del espectro (promedio, max hold) con líneas verticales en canales LoRa.
+	2. **histograma_ocupacion_lora.png**: Barras de ocupación por canal con indicador visual del límite de duty cycle (1%) según normativa ETSI.
+- Rango de visualización por defecto: 862–871 MHz.(En este caso incluí 1 MHz de margen para poder acotar mejor y poder tener datos extras si fuera necesario)
 
 Ejecutar:
 
@@ -125,7 +127,8 @@ Ejecutar:
 python analisis_lora_v2.py
 ```
 
-Entrada: `captura_universidad.csv`. Salida: `analisis_final_tfg.png` y resumen por consola.
+Entrada: `captura_aulario_1hora.csv` (configurable en variable `file_path`). 
+Salida: `analisis_lora_vertical.png`, `histograma_ocupacion_lora.png` y resumen de ocupación por consola.
 
 ## Consejos de captura y análisis
 
@@ -150,6 +153,4 @@ Entrada: `captura_universidad.csv`. Salida: `analisis_final_tfg.png` y resumen p
 - “Gráficas sin datos 863–871”: ajusta `-f` en la captura o modifica los límites `plt.xlim(...)` en los scripts.
 
 ---
-
-Si necesitas ampliar los rangos, canales o reglas de ocupación, puedes editar los arrays de canales y el umbral en los scripts de Python.
 
