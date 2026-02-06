@@ -36,6 +36,7 @@ pip install pandas numpy matplotlib
 	 - Selecciona `HackRF One` en la lista.
 	 - Elige el driver `WinUSB` y pulsa `Install Driver`.
 	 - Vuelve a probar `hackrf_info`.
+![zadig ejemplo](images/zadig.png)
 
 ## Conceptos clave de `hackrf_sweep`
 
