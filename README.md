@@ -150,3 +150,4 @@ Entrada: `captura_universidad.csv`. Salida: `analisis_final_tfg.png` y resumen p
 ---
 
 Si necesitas ampliar los rangos, canales o reglas de ocupación, puedes editar los arrays de canales y el umbral en los scripts de Python.
+
