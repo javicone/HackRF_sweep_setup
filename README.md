@@ -1,5 +1,7 @@
 # Medición y análisis de espectro con HackRF en Windows
 
+![Ejemplo datos recogidos](images/00_dashboard_resumen.png.jpg)
+
 Este proyecto recoge scripts para capturar el espectro con `hackrf_sweep` (herramienta oficial de HackRF) y analizar los datos en Python. Incluye:
 
 - Captura en Windows con PowerShell usando `hackrf_sweep`.
